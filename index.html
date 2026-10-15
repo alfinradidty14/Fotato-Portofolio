@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fotato — Creative Photography & Visual Production Studio</title>
+    <meta name="description" content="Fotato adalah studio fotografi komersial, produk, fashion, dan visual campaign profesional. Eksplorasi portofolio interaktif dan hitung estimasi produksi Anda.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        fotato: {
+                            orange: '#FF6B00',
+                            orangeLight: '#FF8533',
+                            orangeDark: '#E05A00',
+                            dark: '#0F0F11',
+                            cardDark: '#18181B',
+                            softGray: '#F8F9FA'
+                        }
+                    },
+                    boxShadow: {
+                        'pill': '0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0,0,0,0.06)',
+                        'pill-hover': '0 10px 25px -4px rgba(255, 107, 0, 0.2), 0 0 0 1px rgba(255, 107, 0, 0.3)',
+                        'card-3d': '0 22px 45px -12px rgba(0, 0, 0, 0.28)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for 3D Concave / Curved Panorama Gallery matching Reference */
+        .panorama-stage {
+            perspective: 1300px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            padding: 3rem 0 3.5rem 0;
+            user-select: none;
+        }
+
+        .panorama-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.35rem;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .panorama-card {
+            position: relative;
+            border-radius: 1.35rem;
+            overflow: hidden;
+            flex-shrink: 0;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: all 0.55s cubic-bezier(0.2, 0.85, 0.3, 1);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.25);
+            background: #18181b;
+        }
+
+        .panorama-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            pointer-events: none;
+        }
+
+        .panorama-card:hover img {
+            transform: scale(1.07);
+        }
+
+        /* Subtle top/bottom mask fade to enhance cylindrical curve illusion */
+        .panorama-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.02) 60%, rgba(0,0,0,0.65) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .panorama-card:hover::after {
+            opacity: 1;
+        }
+
+        /* Before/After Slider Styles */
+        .ba-container {
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .ba-before-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        /* RAW Unedited Simulation Filter */
+        .raw-filter {
+            filter: saturate(0.45) contrast(0.82) brightness(0.96) sepia(0.08);
+        }
+
+        /* Custom Range Input Styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 22px;
+            width: 22px;
+            border-radius: 50%;
+            background: #FF6B00;
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.25);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* Hide scrollbar on filter pills */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-fotato-dark text-zinc-900 dark:text-zinc-100 font-sans antialiased transition-colors duration-300 selection:bg-fotato-orange selection:text-white">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-zinc-950 text-zinc-300 text-xs py-2 px-4 border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-fotato-orange animate-pulse"></span>
+                <span><strong class="text-white">Fotato Studio:</strong> Slot pemotretan komersial & katalog bulan ini tersisa 4 jadwal!</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="openModal('githubModal')" class="hover:text-fotato-orange transition-colors flex items-center gap-1 font-medium">
+                    <i data-lucide="github" class="w-3.5 h-3.5"></i> Panduan Pasang di GitHub
+                </button>
+                <span class="hidden sm:inline text-zinc-600">|</span>
+                <button onclick="openModal('uploadModal')" class="hover:text-fotato-orange transition-colors hidden sm:flex items-center gap-1 font-medium">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-fotato-orange"></i> Tambah Foto Sendiri
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STICKY NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/85 dark:bg-fotato-dark/85 backdrop-blur-md border-b border-zinc-100 dark:border-zinc-800/80 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-2.5 group">
+                <div class="w-10 h-10 rounded-xl bg-fotato-orange flex items-center justify-center text-white shadow-lg shadow-fotato-orange/30 group-hover:rotate-12 transition-transform">
+                    <i data-lucide="aperture" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <span class="font-display font-extrabold text-2xl tracking-tight text-zinc-900 dark:text-white">Fotato<span class="text-fotato-orange">.</span></span>
+                    <span class="block text-[10px] uppercase tracking-widest text-zinc-400 font-semibold -mt-1">Visual Lab</span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                <a href="#showcase" class="hover:text-fotato-orange dark:hover:text-fotato-orange transition-colors">Showcase 3D</a>
+                <a href="#portfolio" class="hover:text-fotato-orange dark:hover:text-fotato-orange transition-colors">Portofolio</a>
+                <a href="#retouch-lab" class="hover:text-fotato-orange dark:hover:text-fotato-orange transition-colors">Color Grading Lab</a>
+                <a href="#calculator" class="hover:text-fotato-orange dark:hover:text-fotato-orange transition-colors">Kalkulator Harga</a>
+                <a href="#gear" class="hover:text-fotato-orange dark:hover:text-fotato-orange transition-colors">Gear & Studio</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2.5">
+                <!-- Moodboard Drawer Button -->
+                <button onclick="toggleMoodboardDrawer()" class="relative p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-colors" title="Moodboard Favorit">
+                    <i data-lucide="bookmark" class="w-5 h-5"></i>
+                    <span id="moodboardBadge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-fotato-orange text-white text-[11px] font-bold flex items-center justify-center scale-100 transition-transform">0</span>
+                </button>
+
+                <!-- Theme Toggle Button -->
+                <button id="themeToggle" onclick="toggleTheme()" class="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 transition-colors" title="Ganti Mode Terang / Studio Gelap">
+                    <i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Upload / Studio Manager Button -->
+                <button onclick="openModal('uploadModal')" class="hidden lg:inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold border border-zinc-200 dark:border-zinc-700 hover:border-fotato-orange dark:hover:border-fotato-orange transition-colors">
+                    <i data-lucide="upload-cloud" class="w-4 h-4 text-fotato-orange"></i>
+                    Upload Karya
+                </button>
+
+                <!-- CTA Button -->
+                <a href="#calculator" class="inline-flex items-center gap-2 pl-4 pr-2 py-1.5 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs sm:text-sm font-semibold hover:bg-fotato-orange dark:hover:bg-fotato-orange dark:hover:text-white transition-all shadow-sm">
+                    <span>Booking Sesi</span>
+                    <span class="w-7 h-7 rounded-full bg-fotato-orange text-white flex items-center justify-center">
+                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===================================================================== -->
+    <!-- HERO & 3D CURVED SHOWCASE SECTION (MATCHING REFERENCE IMAGE EXACTLY)  -->
+    <!-- ===================================================================== -->
+    <section id="showcase" class="pt-14 pb-20 md:pt-20 md:pb-24 overflow-hidden bg-white dark:bg-fotato-dark transition-colors">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <!-- Orange Eyebrow Subtitle -->
+            <p class="text-fotato-orange font-display font-bold text-sm sm:text-base tracking-wide mb-3">
+                Behind the Lens &bull; Fotato Studio
+            </p>
+
+            <!-- Main Bold Heading Matching Reference -->
+            <h1 class="font-display font-extrabold text-4xl sm:text-5xl md:text-[56px] text-zinc-950 dark:text-white tracking-tight leading-[1.12] mb-5">
+                Curious What Else We’ve<br class="hidden sm:inline" /> Captured?
+            </h1>
+
+            <!-- Muted Subtitle -->
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-8">
+                Explore commercial photography, visual branding, packaging shoots, and high-impact UGC campaign work in our extended Fotato portfolio.
+            </p>
+
+            <!-- Reference Pill Button with Orange Right Arrow Circle -->
+            <div class="flex flex-wrap items-center justify-center gap-4 mb-4">
+                <a href="#portfolio" class="group inline-flex items-center gap-3.5 pl-6 pr-2 py-2 rounded-full bg-white dark:bg-zinc-900 border border-zinc-200/90 dark:border-zinc-700 shadow-pill hover:shadow-pill-hover transition-all duration-300">
+                    <span class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-white">See more Projects</span>
+                    <span class="w-8 h-8 rounded-full bg-fotato-orange text-white flex items-center justify-center group-hover:translate-x-0.5 transition-transform">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 3D CURVED / CONCAVE PANORAMA CAROUSEL (EXACT REFERENCE VIBE) -->
+        <div class="relative max-w-[1440px] mx-auto mt-2">
+            <!-- Left / Right Floating Controls -->
+            <div class="flex justify-center items-center gap-3 mb-2">
+                <button onclick="shiftCarousel(-1)" class="w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-fotato-orange text-zinc-700 dark:text-zinc-300 flex items-center justify-center transition-all shadow-sm" title="Geser Kiri">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button id="autoPlayBtn" onclick="toggleCarouselAutoPlay()" class="px-3.5 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 flex items-center gap-1.5 hover:border-fotato-orange transition-all">
+                    <span id="autoPlayDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="autoPlayLabel">Auto-Rotate Aktif</span>
+                </button>
+                <button onclick="shiftCarousel(1)" class="w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 hover:border-fotato-orange text-zinc-700 dark:text-zinc-300 flex items-center justify-center transition-all shadow-sm" title="Geser Kanan">
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- The 3D Curved Gallery Container -->
+            <div class="panorama-stage" id="panoramaStage">
+                <div class="panorama-track" id="panoramaTrack">
+                    <!-- Dynamically rendered via JS so users can cycle & click for EXIF Lightbox -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 4-STEP WORKFLOW ROW BELOW CURVED GALLERY (MATCHING REFERENCE IMAGE) -->
+        <div class="max-w-5xl mx-auto px-6 mt-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <!-- Step 01 -->
+                <div class="group cursor-pointer p-3 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors" onclick="filterByStep('Commercial & Product')">
+                    <span class="block text-fotato-orange font-display font-extrabold text-sm sm:text-base mb-1">#01</span>
+                    <h3 class="font-display font-bold text-zinc-900 dark:text-white text-sm sm:text-base group-hover:text-fotato-orange transition-colors">Strategy & Planning</h3>
+                    <p class="text-xs text-zinc-400 mt-1">Moodboard, konsep visual & art direction</p>
+                </div>
+                <!-- Step 02 -->
+                <div class="group cursor-pointer p-3 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors" onclick="filterByStep('Food & Beverage')">
+                    <span class="block text-fotato-orange font-display font-extrabold text-sm sm:text-base mb-1">#02</span>
+                    <h3 class="font-display font-bold text-zinc-900 dark:text-white text-sm sm:text-base group-hover:text-fotato-orange transition-colors">Shoot & Production</h3>
+                    <p class="text-xs text-zinc-400 mt-1">Eksekusi pencahayaan studio & properti</p>
+                </div>
+                <!-- Step 03 -->
+                <div class="group cursor-pointer p-3 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors" onclick="document.getElementById('retouch-lab').scrollIntoView({behavior:'smooth'})">
+                    <span class="block text-fotato-orange font-display font-extrabold text-sm sm:text-base mb-1">#03</span>
+                    <h3 class="font-display font-bold text-zinc-900 dark:text-white text-sm sm:text-base group-hover:text-fotato-orange transition-colors">Launch & Color Grade</h3>
+                    <p class="text-xs text-zinc-400 mt-1">High-end retouching & kalibrasi warna iklan</p>
+                </div>
+                <!-- Step 04 -->
+                <div class="group cursor-pointer p-3 rounded-2xl hover:bg-zinc-50 dark:hover:bg-zinc-900/60 transition-colors" onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth'})">
+                    <span class="block text-fotato-orange font-display font-extrabold text-sm sm:text-base mb-1">#04</span>
+                    <h3 class="font-display font-bold text-zinc-900 dark:text-white text-sm sm:text-base group-hover:text-fotato-orange transition-colors">Ongoing Support</h3>
+                    <p class="text-xs text-zinc-400 mt-1">Aset siap pakai untuk kampanye & katalog</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS / TRUST BANNER -->
+    <section class="py-10 border-y border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div>
+                    <p class="font-display font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">340<span class="text-fotato-orange">+</span></p>
+                    <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Brand & Kampanye Terpublikasi</p>
+                </div>
+                <div>
+                    <p class="font-display font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">12.5K<span class="text-fotato-orange">+</span></p>
+                    <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Foto Komersial High-Res</p>
+                </div>
+                <div>
+                    <p class="font-display font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">48 Jam</p>
+                    <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Rata-rata Turnaround Retouch</p>
+                </div>
+                <div>
+                    <p class="font-display font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white">99.4<span class="text-fotato-orange">%</span></p>
+                    <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Tingkat Kepuasan Klien Agensi</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- EXTENDED PORTFOLIO GALLERY WITH EXIF METADATA & MOODBOARD SAVER       -->
+    <!-- ===================================================================== -->
+    <section id="portfolio" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+                <span class="text-fotato-orange font-display font-bold text-xs uppercase tracking-widest">Extended Works &bull; Fotato Archive</span>
+                <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white mt-2">
+                    Eksplorasi Karya & Spesifikasi Kamera
+                </h2>
+                <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-2 max-w-xl">
+                    Klik pada foto untuk membuka <strong>EXIF Inspector</strong> (kamera, lensa, bukaan, skema lighting, dan palet warna), atau simpan ke Moodboard referensi Anda.
+                </p>
+            </div>
+
+            <!-- Search Input & Add Photo Button -->
+            <div class="flex items-center gap-3">
+                <div class="relative flex-1 sm:w-64">
+                    <i data-lucide="search" class="w-4 h-4 text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                    <input id="portfolioSearch" type="text" oninput="renderPortfolioGrid()" placeholder="Cari produk, minuman, lensa..." class="w-full pl-10 pr-4 py-2.5 rounded-full text-sm bg-zinc-100 dark:bg-zinc-800/90 border border-transparent focus:border-fotato-orange focus:bg-white dark:focus:bg-zinc-900 outline-none transition-all" />
+                </div>
+                <button onclick="openModal('uploadModal')" class="px-4 py-2.5 rounded-full bg-fotato-orange hover:bg-fotato-orangeDark text-white text-xs sm:text-sm font-semibold flex items-center gap-1.5 shadow-md shadow-fotato-orange/20 transition-all shrink-0">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Tambah Foto</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-4 mb-8" id="categoryFilterBar">
+            <!-- Dynamically populated -->
+        </div>
+
+        <!-- Portfolio Grid -->
+        <div id="portfolioGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+            <!-- Dynamically rendered -->
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- INTERACTIVE BEFORE / AFTER COLOR GRADING & RETOUCH LAB                -->
+    <!-- ===================================================================== -->
+    <section id="retouch-lab" class="py-20 bg-zinc-950 text-white relative overflow-hidden">
+        <!-- Subtle Orange Glow Background -->
+        <div class="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-fotato-orange/15 blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <!-- Left Column: Info & Preset Selector -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-fotato-orange/15 border border-fotato-orange/30 text-fotato-orange text-xs font-bold">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>Fotato Post-Production Lab</span>
+                    </div>
+                    <h2 class="font-display font-extrabold text-3xl sm:text-4xl leading-tight">
+                        Lihat Perbedaan <span class="text-fotato-orange">RAW Capture</span> vs. Final Color Grade.
+                    </h2>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Setiap foto yang keluar dari studio Fotato melewati proses *frequency separation*, penghilangan debu mikro, hingga kalibrasi warna komersial agar produk terlihat segar dan menggugah.
+                    </p>
+
+                    <!-- Preset Selector Buttons -->
+                    <div class="space-y-2.5 pt-2">
+                        <p class="text-xs uppercase tracking-wider text-zinc-400 font-semibold">Pilih Sampel Studi Kasus:</p>
+                        <div class="grid grid-cols-1 gap-2.5" id="baPresetButtons">
+                            <button onclick="setBeforeAfterSample(0)" class="ba-preset-btn active text-left p-3.5 rounded-2xl border border-fotato-orange bg-zinc-900/90 flex items-center justify-between transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-fotato-orange text-white font-bold text-xs flex items-center justify-center">01</span>
+                                    <div>
+                                        <p class="font-bold text-sm text-white">Summer Citrus Splash (F&B)</p>
+                                        <p class="text-xs text-zinc-400">Highlight embun es, saturasi jeruk & langit biru</p>
+                                    </div>
+                                </div>
+                                <i data-lucide="sliders" class="w-4 h-4 text-fotato-orange"></i>
+                            </button>
+
+                            <button onclick="setBeforeAfterSample(1)" class="ba-preset-btn text-left p-3.5 rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 flex items-center justify-between transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center">02</span>
+                                    <div>
+                                        <p class="font-bold text-sm text-white">Strawberry Elixir Commercial</p>
+                                        <p class="text-xs text-zinc-400">Koreksi pantulan kaca botol & warna merah buah</p>
+                                    </div>
+                                </div>
+                                <i data-lucide="sliders" class="w-4 h-4 text-zinc-500"></i>
+                            </button>
+
+                            <button onclick="setBeforeAfterSample(2)" class="ba-preset-btn text-left p-3.5 rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 flex items-center justify-between transition-all">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-8 h-8 rounded-lg bg-zinc-800 text-zinc-300 font-bold text-xs flex items-center justify-center">03</span>
+                                    <div>
+                                        <p class="font-bold text-sm text-white">Urban Streetwear Editorial</p>
+                                        <p class="text-xs text-zinc-400">Skin tone natural, kontras bayangan & tekstur kain</p>
+                                    </div>
+                                </div>
+                                <i data-lucide="sliders" class="w-4 h-4 text-zinc-500"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Interactive Split Comparison Slider -->
+                <div class="lg:col-span-7">
+                    <div class="relative rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl bg-zinc-900 aspect-[4/3] ba-container" id="baContainer">
+                        <!-- AFTER IMAGE (Full Color Graded) -->
+                        <img id="baAfterImg" src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1200&q=85" alt="After Retouch" class="w-full h-full object-cover" />
+                        <span class="absolute top-4 right-4 z-20 px-3 py-1 rounded-full bg-fotato-orange text-white text-xs font-bold shadow-md">
+                            AFTER &bull; Fotato Grade
+                        </span>
+
+                        <!-- BEFORE IMAGE WRAPPER (Clipped by Slider) -->
+                        <div class="ba-before-wrapper" id="baBeforeWrapper">
+                            <img id="baBeforeImg" src="https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1200&q=85" alt="Before RAW" class="h-full object-cover max-w-none raw-filter" />
+                            <span class="absolute top-4 left-4 z-20 px-3 py-1 rounded-full bg-zinc-900/90 text-zinc-200 border border-zinc-700 text-xs font-bold">
+                                BEFORE &bull; Kamera RAW
+                            </span>
+                        </div>
+
+                        <!-- Divider Handle -->
+                        <div id="baHandle" class="absolute top-0 bottom-0 left-1/2 w-1 bg-white z-20 pointer-events-none flex items-center justify-center shadow-[0_0_15px_rgba(0,0,0,0.6)]">
+                            <div class="w-10 h-10 rounded-full bg-fotato-orange text-white flex items-center justify-center shadow-lg border-2 border-white">
+                                <i data-lucide="move-horizontal" class="w-5 h-5"></i>
+                            </div>
+                        </div>
+
+                        <!-- Invisible Range Input for Smooth Touch/Mouse Drag -->
+                        <input id="baRange" type="range" min="5" max="95" value="50" oninput="updateBeforeAfterSlider(this.value)" class="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30" aria-label="Geser perbandingan sebelum dan sesudah edit" />
+                    </div>
+
+                    <!-- Technical Adjustments Bar -->
+                    <div class="mt-4 grid grid-cols-3 gap-3 text-center bg-zinc-900/90 border border-zinc-800 rounded-2xl p-3 text-xs">
+                        <div>
+                            <span class="text-zinc-400 block">Color Profile</span>
+                            <span id="baSpecColor" class="font-bold text-white">ACEScct / sRGB Commercial</span>
+                        </div>
+                        <div class="border-x border-zinc-800">
+                            <span class="text-zinc-400 block">Teknik Retouch</span>
+                            <span id="baSpecTech" class="font-bold text-fotato-orange">Dodge & Burn + Droplet Clone</span>
+                        </div>
+                        <div>
+                            <span class="text-zinc-400 block">Resolusi Master</span>
+                            <span class="font-bold text-white">61MP Uncompressed TIFF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- INTERACTIVE SHOOT PACKAGE & PRICING CALCULATOR                        -->
+    <!-- ===================================================================== -->
+    <section id="calculator" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-fotato-orange font-display font-bold text-xs uppercase tracking-widest">Transparan & Fleksibel</span>
+            <h2 class="font-display font-extrabold text-3xl sm:text-4xl text-zinc-900 dark:text-white mt-2">
+                Kalkulator Estimasi Produksi Fotato
+            </h2>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm mt-2">
+                Sesuaikan kebutuhan pemotretan brand Anda dan dapatkan estimasi anggaran instan beserta rincian deliverables.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <!-- Left: Configuration Controls -->
+            <div class="lg:col-span-7 bg-zinc-50 dark:bg-zinc-900/70 border border-zinc-200/80 dark:border-zinc-800 rounded-3xl p-6 sm:p-8 space-y-7">
+                <!-- 1. Jenis Layanan -->
+                <div>
+                    <label class="block font-display font-bold text-sm text-zinc-900 dark:text-white mb-3">
+                        1. Pilih Kategori Pemotretan
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="shootTypeContainer">
+                        <button type="button" onclick="selectShootType('product', 1500000, 'Commercial & Product Catalog')" class="shoot-type-btn active p-3.5 rounded-2xl border-2 border-fotato-orange bg-white dark:bg-zinc-900 text-left transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Commercial Product</span>
+                                <span class="text-xs font-semibold text-fotato-orange">Mulai Rp 1,5 Jt</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1">Skincare, gadget, kemasan & e-commerce</p>
+                        </button>
+
+                        <button type="button" onclick="selectShootType('fnb', 1800000, 'Food & Beverage Styling')" class="shoot-type-btn p-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-left transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Food & Beverage</span>
+                                <span class="text-xs font-semibold text-zinc-500">Mulai Rp 1,8 Jt</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1">Menu restoran, minuman segar & food styling</p>
+                        </button>
+
+                        <button type="button" onclick="selectShootType('fashion', 2500000, 'Fashion & Editorial Lookbook')" class="shoot-type-btn p-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-left transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">Fashion Lookbook</span>
+                                <span class="text-xs font-semibold text-zinc-500">Mulai Rp 2,5 Jt</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1">Apparel, streetwear, model indoor/outdoor</p>
+                        </button>
+
+                        <button type="button" onclick="selectShootType('campaign', 3800000, 'Full Brand Visual Campaign')" class="shoot-type-btn p-3.5 rounded-2xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-left transition-all">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-sm">UGC & Ads Campaign</span>
+                                <span class="text-xs font-semibold text-zinc-500">Mulai Rp 3,8 Jt</span>
+                            </div>
+                            <p class="text-xs text-zinc-500 mt-1">Paket foto billboard + klip pendek sosial media</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Jumlah Foto Final Retouch -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="photoCountSlider" class="font-display font-bold text-sm text-zinc-900 dark:text-white">
+                            2. Jumlah Foto High-End Retouch
+                        </label>
+                        <span class="px-3 py-1 rounded-full bg-fotato-orange/10 text-fotato-orange font-bold text-sm">
+                            <span id="photoCountLabel">20</span> Foto Final
+                        </span>
+                    </div>
+                    <input id="photoCountSlider" type="range" min="5" max="80" step="5" value="20" oninput="calculateQuote()" class="w-full h-2 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer" />
+                    <div class="flex justify-between text-[11px] text-zinc-400 mt-1">
+                        <span>5 Foto (Mini)</span>
+                        <span>25 Foto (Standar)</span>
+                        <span>50 Foto (Katalog)</span>
+                        <span>80 Foto (Mega)</span>
+                    </div>
+                </div>
+
+                <!-- 3. Durasi Sesi -->
+                <div>
+                    <label class="block font-display font-bold text-sm text-zinc-900 dark:text-white mb-3">
+                        3. Durasi Sesi Pemotretan
+                    </label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button type="button" onclick="selectDuration(0, 'Half-Day (4 Jam)')" class="duration-btn active py-2.5 px-3 rounded-xl border-2 border-fotato-orange bg-white dark:bg-zinc-900 text-xs sm:text-sm font-bold">
+                            Half Day (4 Jam)
+                        </button>
+                        <button type="button" onclick="selectDuration(900000, 'Full-Day (8 Jam)')" class="duration-btn py-2.5 px-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs sm:text-sm font-bold">
+                            Full Day (8 Jam)
+                        </button>
+                        <button type="button" onclick="selectDuration(2200000, '2 Hari Produksi')" class="duration-btn py-2.5 px-3 rounded-xl border-2 border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs sm:text-sm font-bold">
+                            2 Hari Produksi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Fasilitas Tambahan (Add-ons) -->
+                <div>
+                    <label class="block font-display font-bold text-sm text-zinc-900 dark:text-white mb-3">
+                        4. Tambahan Produksi (Opsional)
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <label class="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-fotato-orange transition-colors">
+                            <span class="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+                                <input type="checkbox" class="addon-check accent-fotato-orange w-4 h-4" data-name="Sewa Studio Cyclorama" data-price="750000" onchange="calculateQuote()" />
+                                Sewa Studio Cyclorama
+                            </span>
+                            <span class="text-xs text-zinc-400">+Rp 750rb</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-fotato-orange transition-colors">
+                            <span class="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+                                <input type="checkbox" class="addon-check accent-fotato-orange w-4 h-4" data-name="Talent / Model Profesional" data-price="1200000" onchange="calculateQuote()" />
+                                Model / Talent Komersial
+                            </span>
+                            <span class="text-xs text-zinc-400">+Rp 1,2Jt</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-fotato-orange transition-colors">
+                            <span class="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+                                <input type="checkbox" class="addon-check accent-fotato-orange w-4 h-4" data-name="Art Directing & Custom Props" data-price="600000" onchange="calculateQuote()" />
+                                Custom Props & Styling
+                            </span>
+                            <span class="text-xs text-zinc-400">+Rp 600rb</span>
+                        </label>
+
+                        <label class="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 cursor-pointer hover:border-fotato-orange transition-colors">
+                            <span class="flex items-center gap-2.5 text-xs sm:text-sm font-medium">
+                                <input type="checkbox" class="addon-check accent-fotato-orange w-4 h-4" data-name="Express Delivery 24 Jam" data-price="500000" onchange="calculateQuote()" />
+                                Express Selesai 24 Jam
+                            </span>
+                            <span class="text-xs text-zinc-400">+Rp 500rb</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Live Summary Receipt & WhatsApp Booking -->
+            <div class="lg:col-span-5 bg-zinc-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-zinc-800 sticky top-28">
+                <div class="flex items-center justify-between pb-5 border-b border-zinc-800">
+                    <div>
+                        <span class="text-xs uppercase tracking-widest text-fotato-orange font-bold">Ringkasan Penawaran</span>
+                        <h3 class="font-display font-bold text-xl mt-0.5">Fotato Production Quote</h3>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-fotato-orange/20 text-fotato-orange flex items-center justify-center">
+                        <i data-lucide="receipt" class="w-5 h-5"></i>
+                    </div>
+                </div>
+
+                <div class="py-5 space-y-3 text-sm border-b border-zinc-800">
+                    <div class="flex justify-between">
+                        <span class="text-zinc-400">Kategori Sesi:</span>
+                        <span id="summaryType" class="font-semibold text-right">Commercial & Product Catalog</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-zinc-400">Durasi Produksi:</span>
+                        <span id="summaryDuration" class="font-semibold">Half-Day (4 Jam)</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-zinc-400">Foto High-End Retouch:</span>
+                        <span id="summaryPhotos" class="font-semibold text-fotato-orange">20 Foto Master</span>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <span class="text-zinc-400">Add-ons Terpilih:</span>
+                        <span id="summaryAddons" class="font-medium text-right text-xs text-zinc-300 max-w-[200px]">Tidak ada tambahan</span>
+                    </div>
+                </div>
+
+                <div class="py-5">
+                    <span class="text-xs text-zinc-400 block">Estimasi Total Investasi</span>
+                    <div class="flex items-baseline gap-2 mt-1">
+                        <span id="summaryTotal" class="font-display font-extrabold text-3xl sm:text-4xl text-white">Rp 2.700.000</span>
+                        <span class="text-xs text-emerald-400 font-semibold">All-in Lisensi Komersial</span>
+                    </div>
+                    <p class="text-[11px] text-zinc-400 mt-2">
+                        *Sudah termasuk garansi revisi minor warna & link akses galeri Cloud Proofing selama 90 hari.
+                    </p>
+                </div>
+
+                <!-- Client Name Input for Booking -->
+                <div class="space-y-3">
+                    <input id="clientBrandName" type="text" placeholder="Nama Anda / Nama Brand (Misal: Kopi Senja)" class="w-full px-4 py-3 rounded-xl bg-zinc-900 border border-zinc-800 text-sm text-white placeholder-zinc-500 focus:border-fotato-orange outline-none" />
+                    
+                    <button onclick="sendQuoteToWhatsApp()" class="w-full py-3.5 px-5 rounded-xl bg-fotato-orange hover:bg-fotato-orangeDark text-white font-display font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-fotato-orange/25 transition-all">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Kirim Estimasi & Booking via WhatsApp</span>
+                    </button>
+
+                    <button onclick="copyQuoteSummary()" class="w-full py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold flex items-center justify-center gap-1.5 border border-zinc-800 transition-colors">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span>Salin Rincian Estimasi ke Clipboard</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- STUDIO GEAR & EQUIPMENT SPECS                                         -->
+    <!-- ===================================================================== -->
+    <section id="gear" class="py-16 bg-zinc-50 dark:bg-zinc-900/40 border-t border-zinc-100 dark:border-zinc-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                <div>
+                    <span class="text-fotato-orange font-display font-bold text-xs uppercase tracking-widest">Arsenal & Perangkat</span>
+                    <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-zinc-900 dark:text-white mt-1">
+                        Standar Peralatan Industri Fotato
+                    </h2>
+                </div>
+                <p class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mt-2 md:mt-0">
+                    Kami menggunakan sensor resolusi ultra-tinggi dan pencahayaan presisi untuk memastikan hasil cetak billboard maupun layar retina tetap tajam.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800">
+                    <div class="w-10 h-10 rounded-xl bg-fotato-orange/10 text-fotato-orange flex items-center justify-center mb-4">
+                        <i data-lucide="camera" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-base">Camera Bodies</h3>
+                    <ul class="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <li>&bull; Sony Alpha α7R V (61MP Full-Frame)</li>
+                        <li>&bull; Fujifilm GFX 100S (Medium Format)</li>
+                        <li>&bull; Sony α7S III (4K 120p Video Ads)</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800">
+                    <div class="w-10 h-10 rounded-xl bg-fotato-orange/10 text-fotato-orange flex items-center justify-center mb-4">
+                        <i data-lucide="circle-dot" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-base">Prime & Macro Lenses</h3>
+                    <ul class="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <li>&bull; Sony FE 90mm f/2.8 Macro G OSS</li>
+                        <li>&bull; Sony FE 50mm f/1.2 GM & 35mm GM</li>
+                        <li>&bull; Laowa 24mm f/14 Probe Lens</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800">
+                    <div class="w-10 h-10 rounded-xl bg-fotato-orange/10 text-fotato-orange flex items-center justify-center mb-4">
+                        <i data-lucide="zap" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-base">High-Speed Strobe</h3>
+                    <ul class="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <li>&bull; Profoto D2 1000 AirTTL Freeze</li>
+                        <li>&bull; Broncolor Siros 800 S WiFi</li>
+                        <li>&bull; Aputure 600d Pro Optical Spot</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200/70 dark:border-zinc-800">
+                    <div class="w-10 h-10 rounded-xl bg-fotato-orange/10 text-fotato-orange flex items-center justify-center mb-4">
+                        <i data-lucide="monitor" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-base">Tethering & Color</h3>
+                    <ul class="mt-2 space-y-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+                        <li>&bull; Capture One Pro 23 Live Tether</li>
+                        <li>&bull; Apple Studio Display + EIZO ColorEdge</li>
+                        <li>&bull; X-Rite ColorChecker Passport</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-zinc-950 text-zinc-400 py-14 border-t border-zinc-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-zinc-800/80">
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-fotato-orange flex items-center justify-center text-white">
+                            <i data-lucide="aperture" class="w-5 h-5"></i>
+                        </div>
+                        <span class="font-display font-extrabold text-2xl text-white">Fotato<span class="text-fotato-orange">.</span></span>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-2 max-w-sm">
+                        Visual Production & Commercial Photography Studio. Membantu brand tampil menonjol lewat fotografi produk, F&B, dan kampanye kreatif.
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="openModal('uploadModal')" class="px-4 py-2.5 rounded-full bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-semibold border border-zinc-800 flex items-center gap-2 transition-colors">
+                        <i data-lucide="database" class="w-4 h-4 text-fotato-orange"></i>
+                        <span>Kelola Data Portofolio (JSON)</span>
+                    </button>
+                    <button onclick="openModal('githubModal')" class="px-4 py-2.5 rounded-full bg-fotato-orange/15 hover:bg-fotato-orange/25 text-fotato-orange text-xs font-semibold border border-fotato-orange/30 flex items-center gap-2 transition-colors">
+                        <i data-lucide="github" class="w-4 h-4"></i>
+                        <span>Cara Deploy ke GitHub Pages</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs gap-4">
+                <p>&copy; 2026 <strong>Fotato Visual Studio</strong>. Ready for GitHub Pages Deployment.</p>
+                <div class="flex items-center gap-5">
+                    <a href="#showcase" class="hover:text-white transition-colors">Showcase 3D</a>
+                    <a href="#portfolio" class="hover:text-white transition-colors">Katalog Karya</a>
+                    <a href="#retouch-lab" class="hover:text-white transition-colors">Before/After</a>
+                    <a href="#calculator" class="hover:text-white transition-colors">Estimasi Harga</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- LIGHTBOX MODAL WITH EXIF CAMERA METADATA & COLOR SWATCHES             -->
+    <!-- ===================================================================== -->
+    <div id="lightboxModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-12 my-auto">
+            <!-- Image Container -->
+            <div class="lg:col-span-7 bg-zinc-950 relative flex items-center justify-center min-h-[320px] sm:min-h-[460px]">
+                <img id="lbImage" src="" alt="Preview" class="max-h-[75vh] w-auto object-contain" />
+                <span id="lbCategoryBadge" class="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md text-fotato-orange text-xs font-bold border border-white/10"></span>
+            </div>
+
+            <!-- EXIF & Story Details -->
+            <div class="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p id="lbClient" class="text-xs font-bold uppercase tracking-wider text-fotato-orange"></p>
+                            <h3 id="lbTitle" class="font-display font-extrabold text-2xl text-zinc-900 dark:text-white mt-0.5"></h3>
+                        </div>
+                        <button onclick="closeModal('lightboxModal')" class="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
+                    <p id="lbDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed"></p>
+
+                    <!-- EXIF Metadata Grid -->
+                    <div class="mt-6">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2.5">Data Teknis EXIF & Lighting</p>
+                        <div class="grid grid-cols-2 gap-2.5 text-xs">
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/70 border border-zinc-100 dark:border-zinc-800">
+                                <span class="text-zinc-400 block">Kamera</span>
+                                <span id="lbCamera" class="font-bold text-zinc-900 dark:text-white"></span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/70 border border-zinc-100 dark:border-zinc-800">
+                                <span class="text-zinc-400 block">Lensa</span>
+                                <span id="lbLens" class="font-bold text-zinc-900 dark:text-white"></span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/70 border border-zinc-100 dark:border-zinc-800">
+                                <span class="text-zinc-400 block">Exposure</span>
+                                <span id="lbExposure" class="font-bold text-zinc-900 dark:text-white"></span>
+                            </div>
+                            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/70 border border-zinc-100 dark:border-zinc-800">
+                                <span class="text-zinc-400 block">Lighting Setup</span>
+                                <span id="lbLighting" class="font-bold text-fotato-orange"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Color Swatches -->
+                    <div class="mt-5">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 mb-2">Color Harmony Palette</p>
+                        <div id="lbPalette" class="flex items-center gap-2"></div>
+                    </div>
+                </div>
+
+                <div class="pt-6 mt-6 border-t border-zinc-100 dark:border-zinc-800 flex items-center gap-3">
+                    <button id="lbMoodboardBtn" class="flex-1 py-3 px-4 rounded-xl bg-fotato-orange hover:bg-fotato-orangeDark text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors">
+                        <i data-lucide="bookmark-plus" class="w-4 h-4"></i>
+                        <span>Simpan ke Moodboard</span>
+                    </button>
+                    <button onclick="closeModal('lightboxModal')" class="py-3 px-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold text-xs sm:text-sm">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- UPLOAD / CUSTOM PORTFOLIO STUDIO MANAGER MODAL                        -->
+    <!-- ===================================================================== -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl my-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+                <div>
+                    <span class="text-xs font-bold text-fotato-orange uppercase">Fotato Studio Manager</span>
+                    <h3 class="font-display font-extrabold text-xl text-zinc-900 dark:text-white">Tambah Foto ke Portofolio</h3>
+                </div>
+                <button onclick="closeModal('uploadModal')" class="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddCustomPhoto(event)" class="space-y-4 mt-5">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-zinc-500 mb-1">Judul Karya / Proyek *</label>
+                    <input id="upTitle" type="text" required placeholder="Contoh: Botanical Perfume Splash" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm outline-none focus:border-fotato-orange" />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1">Kategori *</label>
+                        <select id="upCategory" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm outline-none focus:border-fotato-orange">
+                            <option value="Commercial & Product">Commercial & Product</option>
+                            <option value="Food & Beverage">Food & Beverage</option>
+                            <option value="Fashion & Editorial">Fashion & Editorial</option>
+                            <option value="Visual Campaign">Visual Campaign</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1">Nama Klien / Brand</label>
+                        <input id="upClient" type="text" placeholder="Contoh: Aura Cosmetics" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm outline-none focus:border-fotato-orange" />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-zinc-500 mb-1">URL Gambar (Atau Pilih File Lokal) *</label>
+                    <input id="upImageUrl" type="url" placeholder="https://images.unsplash.com/photo-..." class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm outline-none focus:border-fotato-orange mb-2" />
+                    <input id="upImageFile" type="file" accept="image/*" onchange="handleLocalImageSelect(event)" class="text-xs text-zinc-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-fotato-orange/10 file:text-fotato-orange hover:file:bg-fotato-orange/20" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1">Kamera & Lensa</label>
+                        <input id="upGear" type="text" placeholder="Sony α7R V + 90mm Macro" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm outline-none focus:border-fotato-orange" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-zinc-500 mb-1">Setting Exposure</label>
+                        <input id="upExposure" type="text" placeholder="f/8.0 · 1/1600s · ISO 100" class="w-full px-3.5 py-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm outline-none focus:border-fotato-orange" />
+                    </div>
+                </div>
+
+                <div class="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-zinc-100 dark:border-zinc-800">
+                    <button type="button" onclick="exportPortfolioJSON()" class="px-3.5 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-semibold flex items-center gap-1.5 hover:border-fotato-orange">
+                        <i data-lucide="download" class="w-3.5 h-3.5 text-fotato-orange"></i>
+                        Export JSON
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl bg-fotato-orange hover:bg-fotato-orangeDark text-white font-bold text-sm shadow-lg shadow-fotato-orange/25">
+                        Tambahkan ke Galeri & 3D Arc
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- GITHUB PAGES DEPLOYMENT GUIDE MODAL                                   -->
+    <!-- ===================================================================== -->
+    <div id="githubModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl my-auto">
+            <div class="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-extrabold text-lg">Siap Pakai di GitHub Pages!</h3>
+                        <p class="text-xs text-zinc-400">3 langkah mudah meng-online-kan Fotato</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('githubModal')" class="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <ol class="space-y-3.5 my-5 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300">
+                <li class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+                    <strong class="text-zinc-900 dark:text-white block mb-0.5">1. Buat Repository Baru di GitHub</strong>
+                    Beri nama misalnya <code class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-fotato-orange">fotato-portfolio</code> atau <code class="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-fotato-orange">username.github.io</code>.
+                </li>
+                <li class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+                    <strong class="text-zinc-900 dark:text-white block mb-0.5">2. Upload File <code class="text-fotato-orange">index.html</code> Ini</strong>
+                    Simpan kode ini sebagai <code class="font-bold">index.html</code> lalu upload langsung ke branch <code class="font-bold">main</code>. Tidak perlu instalasi Node.js atau build tambahan.
+                </li>
+                <li class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+                    <strong class="text-zinc-900 dark:text-white block mb-0.5">3. Aktifkan GitHub Pages</strong>
+                    Buka menu <strong>Settings &rarr; Pages</strong> di repo GitHub Anda, pilih branch <strong>main / root</strong> lalu klik Save. Website Fotato Anda langsung aktif!
+                </li>
+            </ol>
+
+            <button onclick="closeModal('githubModal')" class="w-full py-3 rounded-xl bg-fotato-orange text-white font-bold text-sm">
+                Mengerti, Terima Kasih!
+            </button>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- SLIDE-OUT MOODBOARD DRAWER                                            -->
+    <!-- ===================================================================== -->
+    <div id="moodboardDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="bookmark" class="w-5 h-5 text-fotato-orange"></i>
+                <div>
+                    <h3 class="font-display font-extrabold text-lg">Moodboard Referensi Klien</h3>
+                    <p class="text-xs text-zinc-400">Kumpulkan foto favorit untuk diskusi konsep</p>
+                </div>
+            </div>
+            <button onclick="toggleMoodboardDrawer()" class="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div id="moodboardList" class="flex-1 overflow-y-auto p-6 space-y-3">
+            <!-- Dynamically populated -->
+        </div>
+
+        <div class="p-6 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 space-y-2.5">
+            <button onclick="shareMoodboardToWA()" class="w-full py-3 px-4 rounded-xl bg-fotato-orange hover:bg-fotato-orangeDark text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+                <span>Kirim Referensi Moodboard ke Fotato</span>
+            </button>
+            <button onclick="clearMoodboard()" class="w-full py-2 text-xs text-zinc-400 hover:text-red-500 transition-colors">
+                Kosongkan Moodboard
+            </button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastBox" class="fixed bottom-6 right-6 z-50 pointer-events-none opacity-0 translate-y-3 transition-all duration-300 bg-zinc-900 text-white border border-zinc-700 px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-xs sm:text-sm">
+        <span class="w-2.5 h-2.5 rounded-full bg-fotato-orange"></span>
+        <span id="toastMessage">Berhasil disimpan!</span>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MAIN APPLICATION JAVASCRIPT                                           -->
+    <!-- ===================================================================== -->
+    <script>
+        // 1. Initial Curated Photography Dataset (Matching Reference Image Vibe)
+        const defaultPhotos = [
+            {
+                id: 'fot-1',
+                title: 'Citrus Cloud Summer Refreshment',
+                client: 'Sunkist Artisan Lab',
+                category: 'Food & Beverage',
+                image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=900&q=85',
+                desc: 'Pemotretan outdoor high-speed sync dengan latar langit biru cerah, menonjolkan kesegaran irisan jeruk dan tekstur es batu kristal.',
+                camera: 'Sony α7R V',
+                lens: 'FE 35mm f/1.4 GM',
+                exposure: 'f/5.6 · 1/2500s · ISO 100',
+                lighting: 'Profoto B10X + Hard Reflector',
+                palette: ['#0EA5E9', '#F59E0B', '#FEF3C7', '#1E293B']
+            },
+            {
+                id: 'fot-2',
+                title: 'Organic Moss Apparel Flatlay',
+                client: 'Terra Heavyweight Tees',
+                category: 'Fashion & Editorial',
+                image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=85',
+                desc: 'Eksplorasi kontras tekstur kaos katun organik gelap di atas hamparan rumput hutan alami dengan pencahayaan diffused top-down.',
+                camera: 'Fujifilm GFX 100S',
+                lens: 'GF 45mm f/2.8 R WR',
+                exposure: 'f/8.0 · 1/400s · ISO 160',
+                lighting: '8x8 Scrim Diffuser + Fill',
+                palette: ['#18181B', '#3F6212', '#65A30D', '#D4D4D8']
+            },
+            {
+                id: 'fot-3',
+                title: 'Obsidian Lava Cap Concept',
+                client: 'Volcano Streetwear',
+                category: 'Commercial & Product',
+                image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=900&q=85',
+                desc: 'Visual kampanye dramatis menggunakan proyeksi tekstur magma merah di studio gelap untuk menonjolkan siluet topi hitam matte.',
+                camera: 'Sony α7R V',
+                lens: 'FE 90mm f/2.8 Macro',
+                exposure: 'f/11 · 1/200s · ISO 100',
+                lighting: 'Dual Rim Gel Red + Snoot',
+                palette: ['#09090B', '#DC2626', '#F97316', '#52525B']
+            },
+            {
+                id: 'fot-4',
+                title: 'Minimal Matte Beverage Can',
+                client: 'Pura Cold Brew',
+                category: 'Commercial & Product',
+                image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=900&q=85',
+                desc: 'Pemotretan kemasan kaleng minimalis putih dengan gestur tangan manusia untuk iklan UGC dan katalog digital modern.',
+                camera: 'Sony α7 IV',
+                lens: 'FE 50mm f/1.2 GM',
+                exposure: 'f/4.0 · 1/500s · ISO 100',
+                lighting: 'Softbox Stripbox + Neg Fill',
+                palette: ['#F4F4F5', '#14532D', '#D97706', '#27272A']
+            },
+            {
+                id: 'fot-5',
+                title: 'Urban Movement Editorial',
+                client: 'Kinetix Sportswear',
+                category: 'Fashion & Editorial',
+                image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85',
+                desc: 'Perspektif low-angle dinamis untuk lookbook koleksi musim gugur dengan tone warna bersih dan kontras modern.',
+                camera: 'Sony α7R V',
+                lens: 'FE 24mm f/1.4 GM',
+                exposure: 'f/2.8 · 1/1600s · ISO 100',
+                lighting: 'Natural Overcast + Silver Bounce',
+                palette: ['#E4E4E7', '#18181B', '#FACC15', '#71717A']
+            },
+            {
+                id: 'fot-6',
+                title: 'Botanical Forest Tote Campaign',
+                client: 'EcoWeave Goods',
+                category: 'Visual Campaign',
+                image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=85',
+                desc: 'Kampanye produk ramah lingkungan yang dipotret langsung di tengah hutan tropis berkabut untuk narasi keberlanjutan brand.',
+                camera: 'Fujifilm GFX 100S',
+                lens: 'GF 63mm f/2.8',
+                exposure: 'f/4.0 · 1/320s · ISO 200',
+                lighting: 'Ambient Forest + LED Tube',
+                palette: ['#F5F5F4', '#166534', '#14532D', '#A8A29E']
+            },
+            {
+                id: 'fot-7',
+                title: 'Floating Strawberry Elixir Ads',
+                client: 'BerryBoost Indonesia',
+                category: 'Food & Beverage',
+                image: 'https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=900&q=85',
+                desc: 'Komposisi levitasi buah stroberi segar mengelilingi botol kaca dengan kecepatan rana 1/4000 detik untuk iklan billboard utama.',
+                camera: 'Sony α7R V',
+                lens: 'FE 90mm f/2.8 Macro',
+                exposure: 'f/9.0 · 1/4000s · ISO 100',
+                lighting: '3x Broncolor Siros Freeze',
+                palette: ['#E11D48', '#38BDF8', '#FDA4AF', '#881337']
+            },
+            {
+                id: 'fot-8',
+                title: 'Noir Signature Perfume Bottle',
+                client: 'L’Essence Paris',
+                category: 'Commercial & Product',
+                image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85',
+                desc: 'Pencahayaan optik presisi tinggi untuk menonjolkan kilau material produk mewah dan siluet elegan.',
+                camera: 'Fujifilm GFX 100S',
+                lens: 'GF 120mm f/4 Macro',
+                exposure: 'f/11 · 1/125s · ISO 100',
+                lighting: 'Optical Snoot + Acrylic Riser',
+                palette: ['#F8FAFC', '#FB923C', '#94A3B8', '#0F172A']
+            },
+            {
+                id: 'fot-9',
+                title: 'Artisan Espresso Pour Action',
+                client: 'Roastery Nusantara',
+                category: 'Food & Beverage',
+                image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=85',
+                desc: 'Menangkap crema espresso yang hangat dengan skema pencahayaan moody chiaroscuro khas kedai kopi artisan.',
+                camera: 'Sony α7R V',
+                lens: 'FE 50mm f/1.2 GM',
+                exposure: 'f/2.2 · 1/800s · ISO 160',
+                lighting: 'Aputure 300d + Grid',
+                palette: ['#78350F', '#D97706', '#FEF3C7', '#1C1917']
+            }
+        ];
+
+        // Load from localStorage or use default
+        let portfolioData = JSON.parse(localStorage.getItem('fotato_portfolio')) || defaultPhotos;
+        let moodboardIds = JSON.parse(localStorage.getItem('fotato_moodboard')) || ['fot-1', 'fot-7'];
+        let activeCategory = 'All';
+        let carouselOffset = 0;
+        let autoPlayInterval = null;
+        let isAutoPlaying = true;
+        let uploadedBase64Temp = '';
+
+        // 2. Render 3D Concave Panorama Carousel (7 visible slots arranged in a 3D inward curve matching reference)
+        function render3DPanorama() {
+            const track = document.getElementById('panoramaTrack');
+            if (!track) return;
+
+            // 7-slot concave arc configuration (outer cards taller & angled inward, center card deeper/smaller)
+            const slotSpecs = [
+                { offset: -3, width: 215, height: 325, rotateY: 36, translateZ: 95, translateY: 0, opacity: 1 },
+                { offset: -2, width: 175, height: 245, rotateY: 24, translateZ: 30, translateY: 6, opacity: 1 },
+                { offset: -1, width: 150, height: 205, rotateY: 12, translateZ: -15, translateY: 10, opacity: 1 },
+                { offset: 0,  width: 138, height: 188, rotateY: 0,  translateZ: -35, translateY: 12, opacity: 1 },
+                { offset: 1,  width: 150, height: 205, rotateY: -12, translateZ: -15, translateY: 10, opacity: 1 },
+                { offset: 2,  width: 175, height: 245, rotateY: -24, translateZ: 30, translateY: 6, opacity: 1 },
+                { offset: 3,  width: 215, height: 325, rotateY: -36, translateZ: 95, translateY: 0, opacity: 1 }
+            ];
+
+            track.innerHTML = '';
+            const total = portfolioData.length;
+
+            slotSpecs.forEach((slot) => {
+                const idx = ((carouselOffset + slot.offset) % total + total) % total;
+                const item = portfolioData[idx];
+
+                const card = document.createElement('div');
+                card.className = 'panorama-card group';
+                card.style.width = `${slot.width}px`;
+                card.style.height = `${slot.height}px`;
+                card.style.transform = `translateY(${slot.translateY}px) translateZ(${slot.translateZ}px) rotateY(${slot.rotateY}deg)`;
+                card.onclick = () => openLightbox(item.id);
+
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" onerror="this.src='https://placehold.co/600x800/18181b/FF6B00?text=Fotato'" />
+                    <div class="absolute inset-x-0 bottom-0 p-3.5 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-left pointer-events-none">
+                        <span class="inline-block px-2 py-0.5 rounded-md bg-fotato-orange text-white text-[9px] font-bold uppercase tracking-wider mb-1">${item.category}</span>
+                        <p class="text-white font-display font-bold text-xs line-clamp-1">${item.title}</p>
+                        <p class="text-zinc-300 text-[10px]">${item.camera}</p>
+                    </div>
+                `;
+                track.appendChild(card);
+            });
+        }
+
+        function shiftCarousel(direction) {
+            carouselOffset = (carouselOffset + direction + portfolioData.length) % portfolioData.length;
+            render3DPanorama();
+        }
+
+        function toggleCarouselAutoPlay() {
+            isAutoPlaying = !isAutoPlaying;
+            const dot = document.getElementById('autoPlayDot');
+            const label = document.getElementById('autoPlayLabel');
+
+            if (isAutoPlaying) {
+                dot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+                label.textContent = 'Auto-Rotate Aktif';
+                startAutoPlay();
+            } else {
+                dot.className = 'w-2 h-2 rounded-full bg-zinc-400';
+                label.textContent = 'Auto-Rotate Dijeda';
+                clearInterval(autoPlayInterval);
+            }
+        }
+
+        function startAutoPlay() {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = setInterval(() => {
+                if (isAutoPlaying) shiftCarousel(1);
+            }, 3400);
+        }
+
+        // 3. Portfolio Category Filter & Grid Renderer
+        const categories = ['All', 'Commercial & Product', 'Food & Beverage', 'Fashion & Editorial', 'Visual Campaign'];
+
+        function renderCategoryPills() {
+            const bar = document.getElementById('categoryFilterBar');
+            bar.innerHTML = categories.map(cat => {
+                const isActive = activeCategory === cat;
+                return `
+                    <button onclick="setCategory('${cat}')" class="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+                        isActive
+                            ? 'bg-fotato-orange text-white shadow-md shadow-fotato-orange/25'
+                            : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                    }">
+                        ${cat === 'All' ? 'Semua Karya (' + portfolioData.length + ')' : cat}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function setCategory(cat) {
+            activeCategory = cat;
+            renderCategoryPills();
+            renderPortfolioGrid();
+        }
+
+        function filterByStep(cat) {
+            setCategory(cat);
+            document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderPortfolioGrid() {
+            const grid = document.getElementById('portfolioGrid');
+            const query = (document.getElementById('portfolioSearch')?.value || '').toLowerCase();
+
+            const filtered = portfolioData.filter(item => {
+                const matchCat = activeCategory === 'All' || item.category === activeCategory;
+                const matchQuery = item.title.toLowerCase().includes(query) ||
+                                   item.client.toLowerCase().includes(query) ||
+                                   item.camera.toLowerCase().includes(query) ||
+                                   item.category.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-3xl border border-dashed border-zinc-200 dark:border-zinc-800">
+                        <p class="font-display font-bold text-lg text-zinc-700 dark:text-zinc-300">Tidak ada foto yang cocok dengan pencarian Anda.</p>
+                        <button onclick="setCategory('All'); document.getElementById('portfolioSearch').value=''; renderPortfolioGrid();" class="mt-3 px-4 py-2 rounded-full bg-fotato-orange text-white text-xs font-bold">Reset Filter</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => {
+                const isSaved = moodboardIds.includes(item.id);
+                return `
+                    <article class="group rounded-3xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+                        <div class="relative aspect-[4/5] overflow-hidden bg-zinc-950 cursor-pointer" onclick="openLightbox('${item.id}')">
+                            <img src="${item.image}" alt="${item.title}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x750/18181b/FF6B00?text=Fotato'" />
+                            
+                            <!-- Top Badges -->
+                            <div class="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
+                                <span class="px-3 py-1 rounded-full bg-black/65 backdrop-blur-md text-white text-[11px] font-semibold">
+                                    ${item.category}
+                                </span>
+                                <button onclick="event.stopPropagation(); toggleMoodboardItem('${item.id}')" class="w-9 h-9 rounded-full ${isSaved ? 'bg-fotato-orange text-white' : 'bg-black/65 text-white hover:bg-fotato-orange'} backdrop-blur-md flex items-center justify-center transition-colors" title="Simpan ke Moodboard">
+                                    <i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'fill-current' : ''}"></i>
+                                </button>
+                            </div>
+
+                            <!-- Bottom Hover EXIF Overlay -->
+                            <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/85 via-black/45 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between text-white">
+                                <div class="text-xs">
+                                    <p class="font-bold flex items-center gap-1.5">
+                                        <i data-lucide="camera" class="w-3.5 h-3.5 text-fotato-orange"></i>
+                                        ${item.camera} &bull; ${item.lens}
+                                    </p>
+                                    <p class="text-[11px] text-zinc-300 mt-0.5">${item.exposure}</p>
+                                </div>
+                                <span class="w-8 h-8 rounded-full bg-fotato-orange text-white flex items-center justify-center">
+                                    <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-5 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-zinc-400 mb-1">
+                                    <span class="font-semibold text-fotato-orange">${item.client}</span>
+                                    <span>${item.lighting}</span>
+                                </div>
+                                <h3 onclick="openLightbox('${item.id}')" class="font-display font-bold text-lg text-zinc-900 dark:text-white group-hover:text-fotato-orange transition-colors cursor-pointer">
+                                    ${item.title}
+                                </h3>
+                            </div>
+
+                            <div class="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+                                <div class="flex items-center gap-1.5">
+                                    ${(item.palette || ['#FF6B00', '#18181B', '#F4F4F5']).map(hex => `
+                                        <span class="w-4 h-4 rounded-full border border-black/10" style="background:${hex}"></span>
+                                    `).join('')}
+                                </div>
+                                <button onclick="openLightbox('${item.id}')" class="text-xs font-bold text-zinc-700 dark:text-zinc-300 hover:text-fotato-orange flex items-center gap-1">
+                                    <span>Inspeksi EXIF</span>
+                                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // 4. Lightbox EXIF Inspector Modal
+        function openLightbox(id) {
+            const item = portfolioData.find(p => p.id === id);
+            if (!item) return;
+
+            document.getElementById('lbImage').src = item.image;
+            document.getElementById('lbCategoryBadge').textContent = item.category;
+            document.getElementById('lbClient').textContent = item.client;
+            document.getElementById('lbTitle').textContent = item.title;
+            document.getElementById('lbDesc').textContent = item.desc;
+            document.getElementById('lbCamera').textContent = item.camera;
+            document.getElementById('lbLens').textContent = item.lens;
+            document.getElementById('lbExposure').textContent = item.exposure;
+            document.getElementById('lbLighting').textContent = item.lighting;
+
+            const paletteEl = document.getElementById('lbPalette');
+            paletteEl.innerHTML = (item.palette || ['#FF6B00', '#18181B']).map(hex => `
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono">
+                    <span class="w-3.5 h-3.5 rounded-full border border-black/15" style="background:${hex}"></span>
+                    <span>${hex}</span>
+                </div>
+            `).join('');
+
+            const mbBtn = document.getElementById('lbMoodboardBtn');
+            const isSaved = moodboardIds.includes(item.id);
+            mbBtn.innerHTML = isSaved
+                ? `<i data-lucide="check" class="w-4 h-4"></i><span>Tersimpan di Moodboard</span>`
+                : `<i data-lucide="bookmark-plus" class="w-4 h-4"></i><span>Simpan ke Moodboard</span>`;
+            mbBtn.onclick = () => {
+                toggleMoodboardItem(item.id);
+                openLightbox(item.id);
+            };
+
+            openModal('lightboxModal');
+            lucide.createIcons();
+        }
+
+        // 5. Before / After Interactive Comparison Slider
+        const baSamples = [
+            {
+                img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1200&q=85',
+                color: 'ACEScct / Commercial Vibrant Citrus',
+                tech: 'Droplet Micro-Contrast + Sky Recovery'
+            },
+            {
+                img: 'https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=1200&q=85',
+                color: 'Crimson Berry Lush LUT',
+                tech: 'Glass Reflection Cleanup + Composite'
+            },
+            {
+                img: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=85',
+                color: 'Editorial Neutral Warm Film',
+                tech: 'Frequency Separation Skin & Fabric'
+            }
+        ];
+
+        function updateBeforeAfterSlider(val) {
+            const wrapper = document.getElementById('baBeforeWrapper');
+            const handle = document.getElementById('baHandle');
+            const container = document.getElementById('baContainer');
+            const beforeImg = document.getElementById('baBeforeImg');
+
+            wrapper.style.width = `${val}%`;
+            handle.style.left = `${val}%`;
+            if (container && beforeImg) {
+                beforeImg.style.width = `${container.clientWidth}px`;
+            }
+        }
+
+        function setBeforeAfterSample(idx) {
+            const sample = baSamples[idx];
+            document.getElementById('baAfterImg').src = sample.img;
+            document.getElementById('baBeforeImg').src = sample.img;
+            document.getElementById('baSpecColor').textContent = sample.color;
+            document.getElementById('baSpecTech').textContent = sample.tech;
+
+            document.querySelectorAll('.ba-preset-btn').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.className = 'ba-preset-btn active text-left p-3.5 rounded-2xl border border-fotato-orange bg-zinc-900/90 flex items-center justify-between transition-all';
+                } else {
+                    btn.className = 'ba-preset-btn text-left p-3.5 rounded-2xl border border-zinc-800 hover:border-zinc-700 bg-zinc-900/40 flex items-center justify-between transition-all';
+                }
+            });
+
+            updateBeforeAfterSlider(document.getElementById('baRange').value);
+        }
+
+        window.addEventListener('resize', () => {
+            const range = document.getElementById('baRange');
+            if (range) updateBeforeAfterSlider(range.value);
+        });
+
+        // 6. Pricing Calculator Logic
+        let currentShootBase = 1500000;
+        let currentShootName = 'Commercial & Product Catalog';
+        let currentDurationPrice = 0;
+        let currentDurationName = 'Half-Day (4 Jam)';
+
+        function selectShootType(code, price, title) {
+            currentShootBase = price;
+            currentShootName = title;
+            document.querySelectorAll('.shoot-type-btn').forEach(btn => {
+                btn.classList.remove('border-fotato-orange');
+                btn.classList.add('border-zinc-200', 'dark:border-zinc-800');
+            });
+            event.currentTarget.classList.remove('border-zinc-200', 'dark:border-zinc-800');
+            event.currentTarget.classList.add('border-fotato-orange');
+            calculateQuote();
+        }
+
+        function selectDuration(price, label) {
+            currentDurationPrice = price;
+            currentDurationName = label;
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.classList.remove('border-fotato-orange');
+                btn.classList.add('border-zinc-200', 'dark:border-zinc-800');
+            });
+            event.currentTarget.classList.remove('border-zinc-200', 'dark:border-zinc-800');
+            event.currentTarget.classList.add('border-fotato-orange');
+            calculateQuote();
+        }
+
+        function formatIDR(num) {
+            return 'Rp ' + num.toLocaleString('id-ID');
+        }
+
+        function calculateQuote() {
+            const photoCount = parseInt(document.getElementById('photoCountSlider').value, 10);
+            document.getElementById('photoCountLabel').textContent = photoCount;
+
+            const photoCost = photoCount * 60000;
+            let addonTotal = 0;
+            const selectedAddons = [];
+
+            document.querySelectorAll('.addon-check:checked').forEach(chk => {
+                addonTotal += parseInt(chk.dataset.price, 10);
+                selectedAddons.push(chk.dataset.name);
+            });
+
+            const grandTotal = currentShootBase + currentDurationPrice + photoCost + addonTotal;
+
+            document.getElementById('summaryType').textContent = currentShootName;
+            document.getElementById('summaryDuration').textContent = currentDurationName;
+            document.getElementById('summaryPhotos').textContent = `${photoCount} Foto Master`;
+            document.getElementById('summaryAddons').textContent = selectedAddons.length > 0 ? selectedAddons.join(', ') : 'Tidak ada tambahan';
+            document.getElementById('summaryTotal').textContent = formatIDR(grandTotal);
+
+            return { grandTotal, photoCount, selectedAddons };
+        }
+
+        function buildQuoteMessage() {
+            const { grandTotal, photoCount, selectedAddons } = calculateQuote();
+            const brand = document.getElementById('clientBrandName').value.trim() || 'Calon Klien Fotato';
+            return `Halo Tim *Fotato Studio*! Saya *${brand}* ingin berkonsultasi untuk pemotretan:\n\n` +
+                   `• Kategori: ${currentShootName}\n` +
+                   `• Durasi: ${currentDurationName}\n` +
+                   `• Jumlah Foto Retouch: ${photoCount} Foto\n` +
+                   `• Add-ons: ${selectedAddons.length ? selectedAddons.join(', ') : '-'}\n` +
+                   `• Estimasi Kalkulator: *${formatIDR(grandTotal)}*\n\n` +
+                   `Apakah jadwal minggu depan masih tersedia?`;
+        }
+
+        function sendQuoteToWhatsApp() {
+            const text = encodeURIComponent(buildQuoteMessage());
+            window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
+        }
+
+        function copyQuoteSummary() {
+            const msg = buildQuoteMessage();
+            const temp = document.createElement('textarea');
+            temp.value = msg;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('Rincian estimasi berhasil disalin ke Clipboard!');
+        }
+
+        // 7. Moodboard Favorites Drawer
+        function toggleMoodboardItem(id) {
+            const index = moodboardIds.indexOf(id);
+            if (index > -1) {
+                moodboardIds.splice(index, 1);
+                showToast('Foto dihapus dari Moodboard.');
+            } else {
+                moodboardIds.push(id);
+                showToast('Foto ditambahkan ke Moodboard referensi!');
+            }
+            localStorage.setItem('fotato_moodboard', JSON.stringify(moodboardIds));
+            updateMoodboardUI();
+            renderPortfolioGrid();
+        }
+
+        function updateMoodboardUI() {
+            const badge = document.getElementById('moodboardBadge');
+            badge.textContent = moodboardIds.length;
+
+            const list = document.getElementById('moodboardList');
+            const items = portfolioData.filter(p => moodboardIds.includes(p.id));
+
+            if (items.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12 text-zinc-400 text-xs">
+                        Belum ada foto referensi yang disimpan. Klik ikon bookmark pada foto yang Anda sukai.
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = items.map(item => `
+                <div class="flex items-center gap-3 p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-800">
+                    <img src="${item.image}" alt="${item.title}" class="w-16 h-16 rounded-xl object-cover shrink-0" />
+                    <div class="flex-1 min-w-0">
+                        <p class="font-display font-bold text-xs text-zinc-900 dark:text-white truncate">${item.title}</p>
+                        <p class="text-[11px] text-fotato-orange">${item.category}</p>
+                        <p class="text-[10px] text-zinc-400">${item.lighting}</p>
+                    </div>
+                    <button onclick="toggleMoodboardItem('${item.id}')" class="p-2 text-zinc-400 hover:text-red-500">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function toggleMoodboardDrawer() {
+            const drawer = document.getElementById('moodboardDrawer');
+            drawer.classList.toggle('translate-x-full');
+            updateMoodboardUI();
+        }
+
+        function clearMoodboard() {
+            moodboardIds = [];
+            localStorage.setItem('fotato_moodboard', JSON.stringify(moodboardIds));
+            updateMoodboardUI();
+            renderPortfolioGrid();
+            showToast('Moodboard dikosongkan.');
+        }
+
+        function shareMoodboardToWA() {
+            const items = portfolioData.filter(p => moodboardIds.includes(p.id));
+            if (items.length === 0) {
+                showToast('Pilih minimal 1 foto ke Moodboard terlebih dahulu.');
+                return;
+            }
+            const titles = items.map((it, idx) => `${idx + 1}. ${it.title} (${it.category})`).join('\n');
+            const text = encodeURIComponent(`Halo *Fotato Studio*! Berikut adalah daftar referensi visual Moodboard yang saya sukai dari website Anda:\n\n${titles}\n\nSaya ingin berdiskusi konsep serupa untuk brand saya.`);
+            window.open(`https://wa.me/6281234567890?text=${text}`, '_blank');
+        }
+
+        // 8. Custom Photo Upload & JSON Export (GitHub Pages Friendly)
+        function handleLocalImageSelect(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                uploadedBase64Temp = evt.target.result;
+                document.getElementById('upImageUrl').value = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80';
+                showToast('File gambar lokal siap ditambahkan!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleAddCustomPhoto(e) {
+            e.preventDefault();
+            const title = document.getElementById('upTitle').value.trim();
+            const category = document.getElementById('upCategory').value;
+            const client = document.getElementById('upClient').value.trim() || 'Fotato Exclusive';
+            const urlInput = document.getElementById('upImageUrl').value.trim();
+            const gear = document.getElementById('upGear').value.trim() || 'Sony α7R V + 50mm GM';
+            const exposure = document.getElementById('upExposure').value.trim() || 'f/5.6 · 1/500s · ISO 100';
+
+            const finalImg = uploadedBase64Temp || urlInput || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85';
+
+            const newItem = {
+                id: 'fot-' + Date.now(),
+                title,
+                client,
+                category,
+                image: finalImg,
+                desc: 'Karya kustom yang ditambahkan melalui Fotato Studio Manager.',
+                camera: gear.split('+')[0]?.trim() || 'Sony α7R V',
+                lens: gear.split('+')[1]?.trim() || 'FE 50mm f/1.2 GM',
+                exposure,
+                lighting: 'Fotato Custom Strobe Setup',
+                palette: ['#FF6B00', '#18181B', '#F4F4F5', '#38BDF8']
+            };
+
+            portfolioData.unshift(newItem);
+            localStorage.setItem('fotato_portfolio', JSON.stringify(portfolioData));
+            uploadedBase64Temp = '';
+            e.target.reset();
+
+            closeModal('uploadModal');
+            render3DPanorama();
+            renderCategoryPills();
+            renderPortfolioGrid();
+            showToast('Karya baru berhasil ditambahkan ke Carousel 3D & Portofolio!');
+        }
+
+        function exportPortfolioJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(portfolioData, null, 2));
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", dataStr);
+            dlAnchor.setAttribute("download", "fotato-portfolio-data.json");
+            document.body.appendChild(dlAnchor);
+            dlAnchor.click();
+            dlAnchor.remove();
+            showToast('File JSON Portofolio berhasil diunduh!');
+        }
+
+        // 9. Modal, Theme & Utility Helpers
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            const icon = document.getElementById('themeIcon');
+            icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+            showToast(isDark ? 'Mode Studio Gelap diaktifkan' : 'Mode Galeri Terang diaktifkan');
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toastBox');
+            document.getElementById('toastMessage').textContent = msg;
+            box.classList.remove('opacity-0', 'translate-y-3');
+            setTimeout(() => {
+                box.classList.add('opacity-0', 'translate-y-3');
+            }, 2800);
+        }
+
+        // Initialize Everything on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            render3DPanorama();
+            startAutoPlay();
+            renderCategoryPills();
+            renderPortfolioGrid();
+            updateMoodboardUI();
+            calculateQuote();
+            setTimeout(() => updateBeforeAfterSlider(50), 150);
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
